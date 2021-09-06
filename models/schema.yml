@@ -1,0 +1,59 @@
+version: 2
+sources:
+  - name: tpch
+    database: snowflake_sample_data
+    schema: tpch_sf1
+    tables:
+      - name: customer
+        meta:
+          metriql:
+            measures:
+              total_customers:
+                aggregation: count
+                report:
+                  superset:
+                    d3_format: 
+                    certification_details: buremba
+        columns:
+          - name: c_custkey
+          - name: c_name
+            meta:
+              metriql.dimension:
+                type: string
+          - name: c_address
+          - name: c_nationkey
+          - name: c_phone
+          - name: c_acctbal
+          - name: c_mktsegment
+          - name: c_comment
+      - name: orders
+        meta:
+          metriql:
+            measures:
+              total_orders:
+                aggregation: count
+        columns:
+          - name: o_orderkey
+          - name: o_custkey
+            tests:
+              - relationships:
+                  to: source('tpch', 'customer')
+                  field: c_custkey
+                  metriql:
+                    relation: one_to_many
+                    join: left_join
+            meta:
+              metriql.measure:
+                name: unique_users
+                aggregation: count_unique
+          - name: o_orderstatus
+          - name: o_totalprice
+            meta:
+              metriql.measure:
+                aggregation: sum
+                name: total_price
+          - name: o_orderdate
+          - name: o_orderpriority
+          - name: o_clerk
+          - name: o_shippriority
+          - name: o_comment
