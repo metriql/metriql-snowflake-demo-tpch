@@ -32,16 +32,16 @@ sources:
             measures:
               total_orders:
                 aggregation: count
+            relations:
+              customer:
+                to: source('tpch', 'customer')
+                source: o_custkey
+                target: c_custkey
+                relationship: many_to_one
+                type: left_join
         columns:
           - name: o_orderkey
           - name: o_custkey
-            tests:
-              - relationships:
-                  to: source('tpch', 'customer')
-                  field: c_custkey
-                  metriql:
-                    relation: one_to_many
-                    join: left_join
             meta:
               metriql.measure:
                 name: unique_users
